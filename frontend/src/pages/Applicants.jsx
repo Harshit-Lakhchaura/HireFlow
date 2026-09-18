@@ -49,7 +49,7 @@ export default function Applicants() {
                 </td>
                 <td className="py-3">
                   {a.resumeUrl ? (
-                    <a className="text-forest" href={`http://localhost:5000${a.resumeUrl}`} target="_blank" rel="noreferrer">
+                    <a className="text-forest" href={a.resumeUrl} target="_blank" rel="noreferrer">
                       Open
                     </a>
                   ) : (

@@ -28,4 +28,4 @@ const jobSchema = new mongoose.Schema(
 jobSchema.index({ title: "text", description: "text", location: "text" });
 jobSchema.index({ type: 1, status: 1, createdAt: -1 });
 
-module.exports = mongoose.model("Job", jobSchema);
+module.exports = mongoose.models.Job || mongoose.model("Job", jobSchema);

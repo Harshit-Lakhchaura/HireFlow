@@ -17,4 +17,4 @@ const applicationSchema = new mongoose.Schema(
 
 applicationSchema.index({ job: 1, seeker: 1 }, { unique: true });
 
-module.exports = mongoose.model("Application", applicationSchema);
+module.exports = mongoose.models.Application || mongoose.model("Application", applicationSchema);
