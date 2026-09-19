@@ -1,7 +1,9 @@
 import axios from "axios";
 
+const envUrl = import.meta.env.VITE_API_URL || "";
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "/api",
+  // Production (Vercel) must never call localhost — that only exists on your PC.
+  baseURL: import.meta.env.PROD || /localhost|127\.0\.0\.1/.test(envUrl) ? "/api" : envUrl || "/api",
 });
 
 api.interceptors.request.use((config) => {
