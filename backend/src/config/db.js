@@ -2,6 +2,11 @@ const mongoose = require("mongoose");
 
 let connecting;
 
+function mongoUri() {
+  const raw = process.env.MONGO_URI || process.env.MONGODB_URI || "";
+  return raw.trim().replace(/^['"]|['"]$/g, "");
+}
+
 async function connectDB() {
   if (mongoose.connection.readyState === 1) return;
   if (connecting) return connecting;
@@ -13,18 +18,20 @@ async function connectDB() {
 
 async function _connect() {
   mongoose.set("strictQuery", true);
-  const uri = process.env.MONGO_URI || "";
+  const uri = mongoUri();
   const onVercel = Boolean(process.env.VERCEL);
   const isLocal = !uri || /localhost|127\.0\.0\.1/.test(uri);
 
   if (!isLocal) {
-    await mongoose.connect(uri, { serverSelectionTimeoutMS: 20000 });
+    await mongoose.connect(uri, { serverSelectionTimeoutMS: 20000, family: 4 });
     console.log("MongoDB connected");
     return;
   }
 
   if (onVercel) {
-    throw new Error("MONGO_URI must be a MongoDB Atlas connection string on Vercel");
+    throw new Error(
+      "MONGO_URI missing on this deployment. In Vercel → Settings → Environment Variables add MONGO_URI (mongodb+srv://...) for Production + Preview, then Redeploy."
+    );
   }
 
   try {

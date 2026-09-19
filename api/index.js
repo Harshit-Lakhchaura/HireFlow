@@ -6,9 +6,21 @@ let ready;
 
 async function boot() {
   if (!ready) {
-    ready = connectDB().then(() => seedDatabase());
+    ready = connectDB()
+      .then(() => seedDatabase())
+      .catch((err) => {
+        ready = null;
+        throw err;
+      });
   }
   await ready;
+}
+
+function safeMessage(err) {
+  return String(err && err.message ? err.message : err).replace(
+    /mongodb(\+srv)?:\/\/[^@\s]+@/gi,
+    "mongodb://***@"
+  );
 }
 
 module.exports = async (req, res) => {
@@ -18,8 +30,8 @@ module.exports = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(503).json({
-      message:
-        "Database is not connected. In Vercel set MONGO_URI to a MongoDB Atlas URL (Network Access: 0.0.0.0/0).",
+      message: "Database is not connected.",
+      detail: safeMessage(err),
     });
   }
 };
